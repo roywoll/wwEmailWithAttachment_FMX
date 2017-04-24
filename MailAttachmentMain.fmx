@@ -1,4 +1,4 @@
-object ShareDemoForm: TShareDemoForm
+object EmailAttachmentDemoForm: TEmailAttachmentDemoForm
   Left = 0
   Top = 0
   Caption = 'Form17'

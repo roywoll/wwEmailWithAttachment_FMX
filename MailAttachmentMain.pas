@@ -9,7 +9,7 @@ uses
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.ScrollBox, FMX.Memo;
 
 type
-  TShareDemoForm = class(TForm)
+  TEmailAttachmentDemoForm = class(TForm)
     Button2: TButton;
     Memo1: TMemo;
     procedure Button2Click(Sender: TObject);
@@ -20,7 +20,7 @@ type
   end;
 
 var
-  ShareDemoForm: TShareDemoForm;
+  EmailAttachmentDemoForm: TEmailAttachmentDemoForm;
 
 implementation
 
@@ -28,7 +28,7 @@ implementation
 
 uses System.IOUtils, wwEmailWithAttachment;
 
-procedure TShareDemoForm.Button2Click(Sender: TObject);
+procedure TEmailAttachmentDemoForm.Button2Click(Sender: TObject);
 var
   fileName: string;
   lines: TStringList;
@@ -45,8 +45,10 @@ begin
   finally
     lines.Free;
   end;
+
   wwEmail(['roywoll@gmail.com', 'royswoll@yahoo.com'],
-    [], [], 'Subject', 'Content', fileName);
+    [], [], 'Example of Email with Attachment',
+      'Notice that there is an attached file with this email.', fileName);
 end;
 
 end.

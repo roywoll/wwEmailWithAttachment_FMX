@@ -3,13 +3,13 @@ program PMailAttachment;
 uses
   System.StartUpCopy,
   FMX.Forms,
-  MailAttachmentMain in 'MailAttachmentMain.pas' {ShareDemoForm},
+  MailAttachmentMain in 'MailAttachmentMain.pas' {EmailAttachmentDemoForm},
   wwEmailWithAttachment in 'wwEmailWithAttachment.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.CreateForm(TShareDemoForm, ShareDemoForm);
+  Application.CreateForm(TEmailAttachmentDemoForm, EmailAttachmentDemoForm);
   Application.Run;
 end.
