@@ -35,8 +35,6 @@ var
 begin
   fileName := System.IOUtils.TPath.GetDocumentsPath() +
     TPath.DirectorySeparatorChar + 'MyAttachment.txt';
-  fileName := System.IOUtils.TPath.GetCachePath +
-    TPath.DirectorySeparatorChar + 'MyAttachment.txt';
 
   // Create file that we will attach later
   lines := TStringList.Create;
@@ -47,7 +45,6 @@ begin
   finally
     lines.Free;
   end;
-
   wwEmail(['roywoll@gmail.com', 'royswoll@yahoo.com'],
     [], [], 'Subject', 'Content', fileName);
 end;
