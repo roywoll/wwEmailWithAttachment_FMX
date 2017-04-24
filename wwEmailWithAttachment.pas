@@ -240,7 +240,7 @@ begin
         mimeTypeStr := 'text/plain';
       mimeType := StrToNSStr(mimeTypeStr);
       MailController.addAttachmentData(attachment, mimeType,
-        StrToNSStr(fileName));
+        StrToNSStr(TPath.GetFileName(fileName))); // shorten form
     finally
       attachment.release;
     end;
