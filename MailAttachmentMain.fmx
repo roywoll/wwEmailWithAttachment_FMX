@@ -1,0 +1,49 @@
+object ShareDemoForm: TShareDemoForm
+  Left = 0
+  Top = 0
+  Caption = 'Form17'
+  ClientHeight = 503
+  ClientWidth = 308
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 2
+  object Button2: TButton
+    Align = Top
+    Size.Width = 308.000000000000000000
+    Size.Height = 41.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    Text = 'Send Email'
+    OnClick = Button2Click
+  end
+  object Memo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Lines.Strings = (
+      
+        'Please read the readme.txt file to update your environment'#39's sdk' +
+        ' which will resolve the linker error. see code in the SendEmail ' +
+        'button for an example of its usage.'
+      ''
+      'procedure wwEmail('
+      '   Recipients: Array of String;'
+      '   ccRecipients: Array of String;'
+      '   bccRecipients: Array of String;'
+      '   Subject, Content,'
+      '   AttachmentPath: string;'
+      '   mimeTypeStr: string = '#39#39')'
+      ''
+      
+        'You will need to add the unit iosEmailWithAttachment to your for' +
+        'ms'#39' uses clause.')
+    TextSettings.WordWrap = True
+    Align = Client
+    Size.Width = 308.000000000000000000
+    Size.Height = 462.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    Viewport.Width = 300.000000000000000000
+    Viewport.Height = 454.000000000000000000
+  end
+end
