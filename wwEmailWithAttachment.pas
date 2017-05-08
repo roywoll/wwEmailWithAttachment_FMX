@@ -1,8 +1,20 @@
 unit wwEmailWithAttachment;
 {
-  // Copyright (c) 2017 by Woll2Woll Software
+ // Copyright (c) 2017 by Woll2Woll Software
   //
-  // Methods: wwEmail (Email with attachment for ios and android)
+  // Methods: wwEmail (Email with attachment for ios, android, and windows)
+  //
+
+  procedure wwEmail(
+   Recipients: Array of String;
+   ccRecipients: Array of String;
+   bccRecipients: Array of String;
+   Subject, Content,
+   AttachmentPath: string;
+   mimeTypeStr: string = '');
+
+  // If you require Mapi protocol for windows instead of ole, see the firepower
+  // product demos and source
   //
   // In order for this routine to compile and link for iOS, you will need to
   // add the MessageUI framework to your ios sdk
@@ -33,9 +45,15 @@ interface
 {$SCOPEDENUMS ON}
 uses
   System.SysUtils, System.Classes, System.Types, System.Math, System.Generics.Collections,
-  System.IOUtils,
-  FMX.Consts,
-  System.TypInfo,
+  System.IOUtils, System.StrUtils,
+  {$ifdef mswindows}
+  Comobj,
+  Winapi.ShellAPI,
+  Winapi.Windows,
+  Winapi.ActiveX,
+  System.Win.registry,
+  {$endif}
+
   {$ifdef macos}
   Macapi.ObjectiveC, Macapi.Helpers,
   Macapi.ObjCRuntime,
@@ -47,11 +65,44 @@ uses
   macAPI.CocoaTypes,
   {$endif}
   {$endif}
-  FMX.Types,
-  FMX.MediaLibrary, FMX.Controls,
-  FMX.Platform, FMX.Graphics;
+  System.TypInfo;
 
-{$ifdef macos}
+type
+  TwwEmailAttachmentLocation = (Default, Cache, Files, ExternalDrive, ExternalCache);
+
+procedure wwEmail(
+   Recipients: Array of String;
+   ccRecipients: Array of String;
+   bccRecipients: Array of String;
+   Subject, Content,
+   AttachmentPath: string;
+   mimeTypeStr: string = '');
+
+implementation
+
+{$ifdef android}
+uses
+   Androidapi.JNI.GraphicsContentViewText,
+   Androidapi.JNI.App,
+   Androidapi.JNIBridge,
+   Androidapi.JNI.JavaTypes,
+   Androidapi.Helpers,
+   Androidapi.JNI.Net,
+   Androidapi.JNI.Os,
+   Androidapi.IOUtils;
+{$endif}
+
+{$region 'ios'}
+{$ifdef ios}
+
+{$IF not defined(CPUARM)}
+uses
+     Posix.Dlfcn;
+{$ENDIF}
+
+const
+  libMessageUI = '/System/Library/Frameworks/MessageUI.framework/MessageUI';
+
 type
   MFMessageComposeResult = NSInteger;
   MFMailComposeResult = NSInteger;
@@ -98,50 +149,6 @@ type
     procedure mailComposeController(controller: MFMailComposeViewController;
       didFinishWithResult: MFMailComposeResult; error: NSError); cdecl;
   end;
-{$endif}
-
-{
-procedure wwEmail(
-   Recipient, Subject, Content,
-   AttachmentPath: string;
-   mimeTypeStr: string = ''); overload;
-}
-type
-  TwwEmailAttachmentLocation = (Default, Cache, Files, ExternalDrive, ExternalCache);
-
-{$ifdef nextgen}
-procedure wwEmail(
-   Recipients: Array of String;
-   ccRecipients: Array of String;
-   bccRecipients: Array of String;
-   Subject, Content,
-   AttachmentPath: string;
-   mimeTypeStr: string = '');
-{$endif}
-
-implementation
-
-{$ifdef android}
-uses
-   Androidapi.JNI.GraphicsContentViewText,
-   Androidapi.JNI.App,
-   Androidapi.JNIBridge,
-   Androidapi.JNI.JavaTypes,
-   Androidapi.Helpers,
-   Androidapi.JNI.Net,
-   Androidapi.JNI.Os,
-   Androidapi.IOUtils;
-{$endif}
-
-{$ifdef ios}
-
-{$IF not defined(CPUARM)}
-uses
-     Posix.Dlfcn;
-{$ENDIF}
-
-const
-  libMessageUI = '/System/Library/Frameworks/MessageUI.framework/MessageUI';
 
 var
   mailComposeDelegate: TMFMailComposeViewControllerDelegate;
@@ -175,24 +182,18 @@ procedure wwEmail(
    Subject, Content,
    AttachmentPath: string;
    mimeTypeStr: string = '');
-{
-procedure wwEmail(
-   Recipient, Subject, Content,
-   AttachmentPath: string;
-   mimeTypeStr: string = ''); }
 var
   MailController: MFMailComposeViewController;
   attachment: NSData;
   fileName: string;
   mimeType: NSString;
-  controller: UIViewController;
+  //controller: UIViewController;
   Window: UIWindow;
   nsRecipients, nsccRecipients, nsbccRecipients: NSArray;
 
   function ConvertStringArrayToNSArray(InArray: Array of String): NSArray;
   var
     LRecipients: Array of Pointer;
-    s: string;
     i: integer;
   begin
     SetLength(LRecipients, length(InArray));
@@ -252,9 +253,7 @@ begin
 end;
 
 {$IF defined(CPUARM)}
-
  procedure LibMessageUIFakeLoader; cdecl; external libMessageUI;
-
 {$ELSE}
 
 var iMessageUIModule: THandle;
@@ -267,9 +266,10 @@ dlclose(iMessageUIModule);
 
 {$ENDIF}
 {$endif}
+{$endregion}
 
+{$region 'android'}
 {$ifdef android}
-
 procedure wwEmail(Recipients: Array of String; ccRecipients: Array of String;
   bccRecipients: Array of String; subject, Content, AttachmentPath: string;
   mimeTypeStr: string = '');
@@ -315,7 +315,6 @@ begin
   end;
 
   Intent.setType(StringToJString('vnd.android.cursor.dir/email'));
-  // SharedActivity.startActivity(Intent);
 
   ChooserCaption := 'Send To';
   IntentChooser := TJIntent.JavaClass.createChooser(Intent,
@@ -324,4 +323,114 @@ begin
 
 end;
 {$endif}
+{$endregion}
+
+{$region 'MSWindows'}
+{$ifdef MSWINDOWS}
+
+function Succeeded(Res: HResult): Boolean;
+begin
+  Result := Res and $80000000 = 0;
+end;
+
+// Want to Bypass exception so we check this without using the activex unit
+function HaveActiveOleObject(const ClassName: string): boolean;
+var
+  ClassID: TCLSID;
+  Unknown: IUnknown;
+  oleresult: HResult;
+begin
+  ClassID := ProgIDToClassID(ClassName);
+  oleResult:= GetActiveObject(ClassID, nil, Unknown);
+  result:= Succeeded(oleResult);
+end;
+
+procedure DisplayMail(Address, ccAddress, bccAddress,
+  Subject, Body: string; Attachment: TFileName);
+var
+  Outlook: OleVariant;
+  Mail: Variant;
+const
+  olMailItem = $00000000;
+begin
+  if not HaveActiveOleObject('Outlook.Application') then
+    Outlook := CreateOleObject('Outlook.Application')
+  else
+    Outlook:= GetActiveOleObject('Outlook.Application');
+  Mail := Outlook.CreateItem(olMailItem);
+  Mail.To := Address;
+  Mail.BCC:= bccAddress;
+  Mail.CC:= ccAddress;
+  Mail.Subject := Subject;
+  Mail.Body := Body;
+  if Attachment <> '' then
+    Mail.Attachments.Add(Attachment);
+  Mail.Display;
+end;
+
+// Attachment seems to only work with Outlook
+procedure wwEmail(Recipients: Array of String; ccRecipients: Array of String;
+  bccRecipients: Array of String; subject, Content, AttachmentPath: string;
+  mimeTypeStr: string = '');
+var mailcommand: string;
+  Recipient, ccRecipient, bccRecipient: string;
+
+  function GetAddress(AAddresses: Array of String): string;
+  var
+    LAddress: string;
+    Address: string;
+  begin
+    Address:= '';
+    for LAddress in AAddresses do
+    begin
+      StringReplace(LAddress, ' ', '%20%', [rfReplaceAll, rfIgnoreCase]);
+      if Address <> '' then
+        Address := Address + ';' + LAddress
+      else
+        Address := LAddress;
+    end;
+    result:= Address;
+  end;
+
+begin
+  // Later should do url encoding for recipients
+  Recipient:= GetAddress(Recipients);
+  ccRecipient:= GetAddress(ccRecipients);
+  bccRecipient:= GetAddress(bccRecipients);
+
+  if (AttachmentPath<>'') then
+    DisplayMail(Recipient, ccRecipient, bccRecipient, Subject, Content, AttachmentPath)
+  else begin
+    mailcommand:= 'mailto:' + Recipient + '?Subject=' + Subject +
+       '&Body=' + Content +
+       '&Attachment=' + '"' + AttachmentPath + '"';
+
+    ShellExecute(0, 'OPEN', pchar(mailcommand),
+      nil, nil, sw_shownormal);
+  end
+
+end;
+
+
+{$endif}
+{$endregion}
+
+{$region 'OSX'}
+
+{$ifndef nextgen}
+{$ifdef macos}
+procedure wwEmail(
+   Recipients: Array of String;
+   ccRecipients: Array of String;
+   bccRecipients: Array of String;
+   Subject, Content,
+   AttachmentPath: string;
+   mimeTypeStr: string = '');
+begin
+ // Currently does nothing in osx
+end;
+{$endif}
+{$endif}
+{$endregion}
+
 end.

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<ActiveMobileDevice>
-		<PiMAC iOSSimulator="_iossimulator_55408B4B-78D5-4B37-9FA6-FA98F7C72FD4" iOSDevice32="_iosdevice_1e6796c4922d383c4efa8640cf6578f2ea5f6e55" iOSDevice64="_iosdevice_1e6796c4922d383c4efa8640cf6578f2ea5f6e55"/>
+		<PiMAC iOSSimulator="iPhone5" iOSDevice32="_iosdevice_1e6796c4922d383c4efa8640cf6578f2ea5f6e55" iOSDevice64="_iosdevice_1e6796c4922d383c4efa8640cf6578f2ea5f6e55"/>
 		<NoProfile Android="08d0ad06"/>
 	</ActiveMobileDevice>
 	<Transactions>
