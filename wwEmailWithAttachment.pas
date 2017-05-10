@@ -47,7 +47,7 @@ uses
   System.SysUtils, System.Classes, System.Types, System.Math, System.Generics.Collections,
   System.IOUtils, System.StrUtils,
   {$ifdef mswindows}
-  Comobj,
+  System.Win.Comobj,
   Winapi.ShellAPI,
   Winapi.Windows,
   Winapi.ActiveX,
@@ -201,7 +201,6 @@ var
        LRecipients[i]:= (StrToNSStr(InArray[i]) as ILocalObject).GetObjectID;
     Result := TNSArray.Wrap(TNSArray.OCClass.arrayWithObjects(
       @LRecipients[0], Length(LRecipients)));
-    MailController.setToRecipients(Result);
   end;
 
 begin

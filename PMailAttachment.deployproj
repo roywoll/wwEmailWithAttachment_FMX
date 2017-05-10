@@ -5,8 +5,8 @@
     </ProjectExtensions>
     <PropertyGroup>
         <DeviceId Condition="'$(Platform)'=='Android'">08d0ad06</DeviceId>
-        <DeviceId Condition="'$(Platform)'=='iOSDevice32'"/>
-        <DeviceId Condition="'$(Platform)'=='iOSDevice64'"/>
+        <DeviceId Condition="'$(Platform)'=='iOSDevice32'">1e6796c4922d383c4efa8640cf6578f2ea5f6e55</DeviceId>
+        <DeviceId Condition="'$(Platform)'=='iOSDevice64'">1e6796c4922d383c4efa8640cf6578f2ea5f6e55</DeviceId>
         <DeviceId Condition="'$(Platform)'=='iOSSimulator'">iPhone5</DeviceId>
     </PropertyGroup>
     <ItemGroup Condition="'$(Platform)'=='iOSDevice64'">
