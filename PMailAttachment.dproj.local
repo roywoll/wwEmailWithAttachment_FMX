@@ -2,13 +2,11 @@
 <BorlandProject>
 	<ActiveMobileDevice>
 		<PiMAC iOSSimulator="iPhone5" iOSDevice32="_iosdevice_1e6796c4922d383c4efa8640cf6578f2ea5f6e55" iOSDevice64="_iosdevice_1e6796c4922d383c4efa8640cf6578f2ea5f6e55"/>
-		<NoProfile Android="08d0ad06"/>
+		<NoProfile Android="25c01ba4c41c7ece" Android64="25c01ba4c41c7ece"/>
+		<PiMac iOSSimulator="iPhone5" iOSDevice64="" iOSDevice32="_iosdevice_1e6796c4922d383c4efa8640cf6578f2ea5f6e55"/>
 	</ActiveMobileDevice>
 	<Transactions>
-    <Transaction>2017/04/22 23:47:38.000.709,C:\Users\roywoll\Documents\GitHub\iosEmailWithAttachment_firemonkey\iosEmailWithAttachment.pas=</Transaction>
-    <Transaction>2017/04/23 01:01:19.000.504,=C:\Users\roywoll\Documents\GitHub\iosEmailWithAttachment_firemonkey\wwEmailWithAttachment.pas</Transaction>
-    <Transaction>2017/04/23 14:24:43.000.835,=C:\Users\roywoll\Documents\GitHub\iosEmailWithAttachment_firemonkey\Unit1.pas</Transaction>
-    <Transaction>2017/04/23 14:24:54.000.731,C:\Users\roywoll\Documents\GitHub\iosEmailWithAttachment_firemonkey\osxEmailWithAttachment.pas=C:\Users\roywoll\Documents\GitHub\iosEmailWithAttachment_firemonkey\Unit1.pas</Transaction>
-    <Transaction>2017/04/23 18:07:50.000.621,C:\Users\roywoll\Documents\GitHub\iosEmailWithAttachment_firemonkey\osxEmailWithAttachment.pas=</Transaction>
+    <Transaction>2020/10/27 14:49:35.000.901,C:\Users\roywoll\Documents\GitHub\wwEmailWithAttachment_FMX\PMailAttachment.dproj=C:\Users\roywoll\Documents\woll2woll\FirePowerX\demos\21.0\EmailWithAttachment\PMailAttachment.dproj</Transaction>
+    <Transaction>2020/10/27 14:50:16.000.385,C:\Users\roywoll\Documents\GitHub\wwEmailWithAttachment_FMX\MailAttachmentMain.fmx=C:\Users\roywoll\Documents\woll2woll\FirePowerX\demos\21.0\EmailWithAttachment\MailAttachmentMain.fmx</Transaction>
   </Transactions>
 </BorlandProject>

@@ -6,7 +6,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes,
   System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
-  FMX.Controls.Presentation, FMX.StdCtrls, FMX.ScrollBox, FMX.Memo;
+  FMX.Controls.Presentation, FMX.StdCtrls, FMX.ScrollBox, FMX.Memo,
+  FMX.Memo.Types;
 
 type
   TEmailAttachmentDemoForm = class(TForm)
@@ -46,8 +47,9 @@ begin
     lines.Free;
   end;
 
-  wwEmail(['roywoll@gmail.com', 'royswoll@yahoo.com'],
-    [], [], 'Example of Email with Attachment',
+  wwEmail(
+    ['Roy Woll<roywoll@gmail.com>', 'royswoll@yahoo.com'],
+    ['nancywoll@gmail.com'], [], 'Example of Email with Attachment',
       'Notice that there is an attached file with this email.', fileName);
 end;
 
