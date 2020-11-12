@@ -385,34 +385,37 @@ begin
   Intent.putExtra(TJIntent.JavaClass.EXTRA_TEXT, StringToJString(Content));
 
   // Just filename portion for android services
-  CacheName := GetExternalCacheDir + TPath.DirectorySeparatorChar +
-    TPath.GetFileName(AttachmentPath);
-  if FileExists(CacheName) then
-    Tfile.Delete(CacheName);
-  Tfile.Copy(AttachmentPath, CacheName);
-
-  fileNameTemp := StringToJString(CacheName);
-  AttachmentFile := TJFile.JavaClass.init(fileNameTemp);
-
-  if AttachmentFile <> nil then // attachment found
+  if AttachmentPath<>'' then
   begin
-    AttachmentFile.setReadable(True, false);
-    if not TOSVersion.Check(7) then
+    CacheName := GetExternalCacheDir + TPath.DirectorySeparatorChar +
+      TPath.GetFileName(AttachmentPath);
+    if FileExists(CacheName) then
+     Tfile.Delete(CacheName);
+    Tfile.Copy(AttachmentPath, CacheName);
+
+    fileNameTemp := StringToJString(CacheName);
+    AttachmentFile := TJFile.JavaClass.init(fileNameTemp);
+
+    if AttachmentFile <> nil then // attachment found
     begin
-      Uri := TJnet_Uri.JavaClass.fromFile(AttachmentFile);
-      Intent.putExtra(TJIntent.JavaClass.EXTRA_STREAM,
-        TJParcelable.Wrap((Uri as ILocalObject).GetObjectID));
-    end
-    else begin  // support android 24  and later
-      Intent.setFlags(TJIntent.JavaClass.FLAG_GRANT_READ_URI_PERMISSION);
-      Uri := TAndroidHelper.JFileToJURI(AttachmentFile);
-      // 2/28/2020 - Missing this line before so attachment missing
-      Intent.putExtra(TJIntent.JavaClass.EXTRA_STREAM,
-        TJParcelable.Wrap((Uri as ILocalObject).GetObjectID));
-    end;
+      AttachmentFile.setReadable(True, false);
+      if not TOSVersion.Check(7) then
+      begin
+        Uri := TJnet_Uri.JavaClass.fromFile(AttachmentFile);
+        Intent.putExtra(TJIntent.JavaClass.EXTRA_STREAM,
+          TJParcelable.Wrap((Uri as ILocalObject).GetObjectID));
+      end
+      else begin  // support android 24  and later
+        Intent.setFlags(TJIntent.JavaClass.FLAG_GRANT_READ_URI_PERMISSION);
+        Uri := TAndroidHelper.JFileToJURI(AttachmentFile);
+        // 2/28/2020 - Missing this line before so attachment missing
+        Intent.putExtra(TJIntent.JavaClass.EXTRA_STREAM,
+          TJParcelable.Wrap((Uri as ILocalObject).GetObjectID));
+      end;
 //    Uri := FileProvider.getUriForFile(mReactContext,
 //                mReactContext.getApplicationContext().getPackageName() + ".provider",
 //                imageFile);
+    end
   end;
 
   Intent.setType(StringToJString('vnd.android.cursor.dir/email'));
